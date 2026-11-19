@@ -39,26 +39,34 @@ Title: "DG Arzneimittelallergie"
 Description: "Arzneimittelallergie, wie sie in der Hausarztpraxis erfasst und auf der Notfallstation gelesen wird."
 
 // Anforderung 1: nur Allergien gegen Arzneimittel
-// * category TODO_Regel
+// Wert fixieren: gilt für jede Allergie in diesem Profil
+* category 1..1
+* category = #medication
 
-// Anforderung 2: klinischer Status
-// * clinicalStatus TODO_Regel
+// Anforderung 2: klinischer Status muss immer angegeben sein
+* clinicalStatus 1..1 MS
 
-// Anforderung 3: Codes aus der Schweizer Allergieliste ($ch-allergy-vs)
-// * code TODO_Regel
+// Anforderung 3: Codes aus der Schweizer Allergieliste
+// extensible: fehlt ein passender Code, darf trotzdem etwas erfasst werden
+* code 1..1 MS
+* code from $ch-allergy-vs (extensible)
 
-// Anforderung 4: Kritikalität (wie gefährlich die Allergie ist)
-// * criticality TODO_Regel
+// Anforderung 4: Kritikalität ist für die Notfallstation wichtig
+// Ist sie unbekannt, wird #unable-to-assess erfasst
+* criticality 1..1 MS
 
-// Anforderung 5: Beginn der Allergie
-// * onset[x] TODO_Regel
+// Anforderung 5: Beginn als Datum oder als ungefähres Alter
+* onset[x] only dateTime or Age
+* onset[x] MS
 
-// Anforderung 6: wer die Allergie erfasst hat
-// * recorder TODO_Regel
+// Anforderung 6: erfasst von einer Ärztin oder einem Arzt
+* recorder only Reference(CHCorePractitioner or CHCorePractitionerRole)
+* recorder 1..1 MS
 
-// Anforderung 7: Reaktionen (die Symptome einer Reaktion stehen in reaction.manifestation)
-// * reaction TODO_Regel
-// * reaction.manifestation TODO_Regel   (nur falls ihr dafür eine Regel braucht)
+// Anforderung 7: Reaktionen erfassen können, wenn bekannt (nicht Pflicht)
+* reaction MS
+* reaction.manifestation MS
+* reaction.manifestation from $ch-allergy-manifestation-vs (extensible)
 
-// Invariante (steht schon in invarianten.fsh), nur die // entfernen:
-// * obeys dg-allergy-1
+// Invariante: bestätigte Allergie braucht eine Reaktion
+* obeys dg-allergy-1
